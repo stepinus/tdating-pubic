@@ -13,9 +13,12 @@ interface TelegramWebAppInitData {
 }
 
 interface TelegramWebApp {
-    initData: TelegramWebAppInitData;
+    initData: string; // initData теперь строка
+    initDataUnsafe: TelegramWebAppInitData; // для непосредственного доступа к объекту
 }
 
 interface Window {
-    Telegram: TelegramWebApp;
+    Telegram: {
+        WebApp: TelegramWebApp;
+    };
 }

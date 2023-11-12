@@ -1,16 +1,12 @@
-import {useEffect, useState} from 'react'
-import './App.css'
+import React, { useEffect, useState } from 'react';
 
-const App = () => {
+const App:React.FC = () => {
     const [user, setUser] = useState<TelegramWebAppUserData | null>(null);
 
     useEffect(() => {
-        if (window.Telegram) {
-            const initData = window.Telegram.initData;
+        if (window.Telegram?.WebApp) {
+            const initData = JSON.parse(window.Telegram.WebApp.initData) as TelegramWebAppInitData;
             setUser(initData.user);
-            if(initData){
-                alert(JSON.stringify(initData,null,2))
-            }
         }
     }, []);
 
@@ -20,15 +16,13 @@ const App = () => {
 
     return (
         <div>
-            <pre>{JSON.stringify(user,null,2)}</pre>
-        {/*    <h1>User Information</h1>*/}
-        {/*    <p>ID: {user.id}</p>*/}
-        {/*    <p>Name: {user.first_name} {user.last_name}</p>*/}
-        {/*    <p>Username: {user.username || 'Not provided'}</p>*/}
-        {/*    <p>Photo URL: {user.photo_url ? <img src={user.photo_url} alt="User" /> : 'No photo'}</p>*/}
+            <h1>User Information</h1>
+            <p>ID: {user.id}</p>
+            <p>Name: {user.first_name} {user.last_name}</p>
+            <p>Username: {user.username ?? 'Not provided'}</p>
+            <p>Photo URL: {user.photo_url ? <img src={user.photo_url} alt="User" /> : 'No photo'}</p>
         </div>
     );
 }
 
-
-export default App
+export default App;
