@@ -16,7 +16,6 @@ const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
     }));
 
     const handleSwipe = (direction: 'left' | 'right') => {
-        if(showTapZones)return;
         set({
             opacity: 0,
             transform: `translateX(${direction === 'left' ? -100 : 100}%)`
