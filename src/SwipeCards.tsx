@@ -30,8 +30,16 @@ const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
     };
 
     const swipeHandlers = useSwipeable({
-        onSwipedLeft: () => swipe('left'),
-        onSwipedRight: () => swipe('right')
+        onSwipedLeft: () => {
+            if (!showTapZones) {
+                swipe('left');
+            }
+        },
+        onSwipedRight: () => {
+            if (!showTapZones) {
+                swipe('right');
+            }
+        }
     });
 
     const tapZoneStyle = {
@@ -46,8 +54,9 @@ const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
     return (
         <animated.div
             {...swipeHandlers}
-            style={{ ...springProps,
+            style={{
                 position: 'relative',
+                ...springProps,
                 width: '100vw',
                 height: '100vw',
                 backgroundColor: colors[index],
@@ -56,8 +65,8 @@ const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
                 alignItems: 'center'
             }}
         >
-            {showTapZones && <div style={{ ...tapZoneStyle,   position: 'absolute', left: 0 }} onClick={() => swipe('left')} />}
-            {showTapZones && <div style={{ ...tapZoneStyle,   position: 'absolute', right: 0 }} onClick={() => swipe('right')} />}
+            {showTapZones && <div style={{ ...tapZoneStyle,position: 'absolute',left: 0 }} onClick={() => swipe('left')} />}
+            {showTapZones && <div style={{ ...tapZoneStyle,position: 'absolute',right: 0 }} onClick={() => swipe('right')} />}
             Swipe or Tap me!
         </animated.div>
     );
