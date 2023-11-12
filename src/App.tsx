@@ -9,7 +9,7 @@ function App() {
               // Получение данных пользователя из initDat
              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error
-        const initData = window.Telegram.WebApp.initData;
+        const initData = window.Telegram?.WebApp?.initData;
         setUserData(initData);
     },[])
   return (
