@@ -7,7 +7,7 @@ const App = () => {
     useEffect(() => {
         if (window.Telegram) {
             const initData = window.Telegram.initData;
-            setUser(initData.user);
+            setUser(initData?.user);
         }
     }, []);
 
