@@ -5,8 +5,8 @@ const App:React.FC = () => {
 
     useEffect(() => {
         if (window.Telegram?.WebApp) {
-            const initData = JSON.parse(window.Telegram.WebApp.initData) as TelegramWebAppInitData;
-            setUser(initData.user);
+            const initDataUnsafe = window.Telegram.WebApp.initDataUnsafe
+            setUser(initDataUnsafe.user);
         }
     }, []);
 
