@@ -18,7 +18,14 @@ const SwipeCards:React.FC = () => {
     });
 
     return (
-        <div {...handlers} style={{ width: 200, height: 200, backgroundColor: colors[index] }}>
+        <div {...handlers} style={{
+            width: '100vw',
+            height: '100vw', // Задает высоту равной ширине для сохранения квадратной формы
+            backgroundColor: colors[index],
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+        }}>
             Swipe me!
         </div>
     );
