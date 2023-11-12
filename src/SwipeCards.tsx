@@ -1,41 +1,59 @@
 import React, { useState } from 'react';
-import { useSwipeable } from 'react-swipeable';
+import { useSpring, animated } from 'react-spring';
 
-const colors = ["red", "blue", "green", "yellow"]; // Пример цветов для квадратиков
+interface SwipeCardsProps {
+    showTapZones: boolean;
+}
 
-const SwipeCards:React.FC = () => {
+const colors = ["red", "blue", "green", "yellow"];
+
+const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
     const [index, setIndex] = useState(0);
-    const [swipeStyle, setSwipeStyle] = useState({});
+    const [props, set] = useSpring(() => ({
+        opacity: 1,
+        transform: 'translateX(0px)'
+    }));
 
-    const handlers = useSwipeable({
-        onSwiped: (eventData) => {
-            const {dir} = eventData;
-            if (dir === 'Left' || dir === 'Right') {
-                setSwipeStyle({
-                    opacity: 0,
-                    transform: `translateX(${dir === 'Left' ? '-100%' : '100%'})`
-                });
-                setTimeout(() => {
-                    setSwipeStyle({});
-                    setIndex((i) => (i + 1) % colors.length);
-                }, 500); // Сбросить стиль через 500 мс
-            }
-        }
-    });
+    const handleSwipe = (direction: 'left' | 'right') => {
+        set({
+            opacity: 0,
+            transform: `translateX(${direction === 'left' ? -100 : 100}%)`
+        });
+
+        setTimeout(() => {
+            set({ opacity: 1, transform: 'translateX(0px)' });
+            setIndex((i) => (i + 1) % colors.length);
+        }, 500);
+    };
+
+    const tapZoneStyle = {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        width: '12.5%',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backdropFilter: 'blur(8px)',
+        display: 'block'
+    };
 
     return (
-        <div {...handlers} style={{
-            width: '100vw',
-            height: '100vw',
-            backgroundColor: colors[index],
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            transition: 'transform 0.5s, opacity 0.5s',
-            ...swipeStyle
-        }}>
-            Swipe me!
-        </div>
+        <animated.div
+            style={{
+                position: 'relative',
+                ...props,
+                width: '100vw',
+                height: '100vw',
+                backgroundColor: colors[index],
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}
+        >
+            {showTapZones && <div style={{ ...tapZoneStyle,position:'absolute', left: 0 }} onClick={() => handleSwipe('left')} /> }
+            {showTapZones && <div style={{ ...tapZoneStyle,position:'absolute', right: 0 }} onClick={() => handleSwipe('right')} />}
+            Swipe or Tap me!
+        </animated.div>
     );
-}
+};
+
 export default SwipeCards;

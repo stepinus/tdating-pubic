@@ -3,6 +3,8 @@ import SwipeCards from "./SwipeCards.tsx";
 
 const App:React.FC = () => {
     const [data, setData] = useState<TelegramWebAppInitData | null>(null)
+    const [showTapZones, setShowTapZones] = useState(false);
+
     useEffect(() => {
         if (window.Telegram?.WebApp) {
             const initDataUnsafe = window.Telegram.WebApp.initDataUnsafe
@@ -19,7 +21,10 @@ const App:React.FC = () => {
             <p>ID: {user.id}</p>
             <p>Name: {user.first_name} {user.last_name}</p>
             <p>Username: {user.username ?? 'Not provided'}</p>
-            <SwipeCards />
+            <button onClick={() => setShowTapZones(!showTapZones)}>
+                {showTapZones ? 'Hide Tap Zones' : 'Show Tap Zones'}
+            </button>
+            <SwipeCards showTapZones={showTapZones} />
 
         </div>
     );
