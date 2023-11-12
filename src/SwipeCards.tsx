@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSpring, animated } from 'react-spring';
+import { useSwipeable } from 'react-swipeable';
 
 interface SwipeCardsProps {
     showTapZones: boolean;
@@ -15,6 +16,7 @@ const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
     }));
 
     const handleSwipe = (direction: 'left' | 'right') => {
+        if(showTapZones)return;
         set({
             opacity: 0,
             transform: `translateX(${direction === 'left' ? -100 : 100}%)`
@@ -26,18 +28,23 @@ const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
         }, 500);
     };
 
+    const swipeHandlers = useSwipeable({
+        onSwipedLeft: () => handleSwipe('left'),
+        onSwipedRight: () => handleSwipe('right')
+    });
+
     const tapZoneStyle = {
         position: 'absolute',
         top: 0,
         bottom: 0,
         width: '12.5%',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        backdropFilter: 'blur(8px)',
-        display: 'block'
+        backdropFilter: 'blur(8px)'
     };
 
     return (
         <animated.div
+            {...swipeHandlers}
             style={{
                 position: 'relative',
                 ...props,
@@ -49,8 +56,8 @@ const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
                 alignItems: 'center'
             }}
         >
-            {showTapZones && <div style={{ ...tapZoneStyle,position:'absolute', left: 0 }} onClick={() => handleSwipe('left')} /> }
-            {showTapZones && <div style={{ ...tapZoneStyle,position:'absolute', right: 0 }} onClick={() => handleSwipe('right')} />}
+            {showTapZones && <div style={{ ...tapZoneStyle,   position: 'absolute', left: 0 }} onClick={() => handleSwipe('left')} />}
+            {showTapZones && <div style={{ ...tapZoneStyle,   position: 'absolute', right: 0 }} onClick={() => handleSwipe('right')} />}
             Swipe or Tap me!
         </animated.div>
     );
