@@ -5,30 +5,37 @@ const colors = ["red", "blue", "green", "yellow"]; // Пример цветов 
 
 const SwipeCards:React.FC = () => {
     const [index, setIndex] = useState(0);
+    const [swipeStyle, setSwipeStyle] = useState({});
 
     const handlers = useSwipeable({
-        onSwipedLeft: () => {
-            alert('Dislike');
-            setIndex((i) => (i + 1) % colors.length);
-        },
-        onSwipedRight: () => {
-            alert('Like');
-            setIndex((i) => (i + 1) % colors.length);
+        onSwiped: (eventData) => {
+            const {dir} = eventData;
+            if (dir === 'Left' || dir === 'Right') {
+                setSwipeStyle({
+                    opacity: 0,
+                    transform: `translateX(${dir === 'Left' ? '-100%' : '100%'})`
+                });
+                setTimeout(() => {
+                    setSwipeStyle({});
+                    setIndex((i) => (i + 1) % colors.length);
+                }, 500); // Сбросить стиль через 500 мс
+            }
         }
     });
 
     return (
         <div {...handlers} style={{
             width: '100vw',
-            height: '100vw', // Задает высоту равной ширине для сохранения квадратной формы
+            height: '100vw',
             backgroundColor: colors[index],
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            transition: 'transform 0.5s, opacity 0.5s',
+            ...swipeStyle
         }}>
             Swipe me!
         </div>
     );
-};
-
+}
 export default SwipeCards;
