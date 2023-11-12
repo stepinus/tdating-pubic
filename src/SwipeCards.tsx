@@ -10,26 +10,28 @@ const colors = ["red", "blue", "green", "yellow"];
 
 const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
     const [index, setIndex] = useState(0);
-    const [props, set] = useSpring(() => ({
-        opacity: 1,
-        transform: 'translateX(0px)'
+    const [springProps, setSpringProps] = useSpring(() => ({
+        from: { transform: 'scale(1)', opacity: 1 },
+        to: { transform: 'scale(1)', opacity: 1 },
+        reset: true
     }));
 
-    const handleSwipe = (direction: 'left' | 'right') => {
-        set({
-            opacity: 0,
-            transform: `translateX(${direction === 'left' ? -100 : 100}%)`
+    const swipe = (direction: 'left' | 'right') => {
+        setSpringProps({
+            to: {
+                transform: `translateX(${direction === 'left' ? '-150%' : '150%'}) scale(0.5)`,
+                opacity: 0
+            },
+            onRest: () => {
+                setIndex((i) => (i + 1) % colors.length);
+                setSpringProps({ from: { transform: 'scale(1)', opacity: 1 } });
+            },
         });
-
-        setTimeout(() => {
-            set({ opacity: 1, transform: 'translateX(0px)' });
-            setIndex((i) => (i + 1) % colors.length);
-        }, 500);
     };
 
     const swipeHandlers = useSwipeable({
-        onSwipedLeft: () => handleSwipe('left'),
-        onSwipedRight: () => handleSwipe('right')
+        onSwipedLeft: () => swipe('left'),
+        onSwipedRight: () => swipe('right')
     });
 
     const tapZoneStyle = {
@@ -44,9 +46,8 @@ const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
     return (
         <animated.div
             {...swipeHandlers}
-            style={{
+            style={{ ...springProps,
                 position: 'relative',
-                ...props,
                 width: '100vw',
                 height: '100vw',
                 backgroundColor: colors[index],
@@ -55,8 +56,8 @@ const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
                 alignItems: 'center'
             }}
         >
-            {showTapZones && <div style={{ ...tapZoneStyle,   position: 'absolute', left: 0 }} onClick={() => handleSwipe('left')} />}
-            {showTapZones && <div style={{ ...tapZoneStyle,   position: 'absolute', right: 0 }} onClick={() => handleSwipe('right')} />}
+            {showTapZones && <div style={{ ...tapZoneStyle,   position: 'absolute', left: 0 }} onClick={() => swipe('left')} />}
+            {showTapZones && <div style={{ ...tapZoneStyle,   position: 'absolute', right: 0 }} onClick={() => swipe('right')} />}
             Swipe or Tap me!
         </animated.div>
     );
