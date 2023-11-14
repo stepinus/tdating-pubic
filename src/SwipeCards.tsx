@@ -1,84 +1,41 @@
-import React, { useState } from 'react';
-import { useSpring, animated } from 'react-spring';
-import CardComponent from './CardComponent';
-import { testData } from './testData';
+import React, { useState, useMemo } from 'react';
+import TinderCard from 'react-tinder-card';
+import CardComponent from './CardComponent'; // Убедитесь, что этот компонент импортирован
+import { testData } from './testData'; // Данные для карточек
 
 const SwipeCards: React.FC = () => {
-    const [index, setIndex] = useState(0);
-    const [isDragging, setIsDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [springProps, setSpringProps] = useSpring(() => ({
-        x: 0,
-        opacity: 1,
-        config: { tension: 300, friction: 30 },
-        immediate: key => key === "x"
-    }));
+    const [currentIndex, setCurrentIndex] = useState(0);
 
-    const handleStart = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-        setIsDragging(true);
-        const clientX = event.type.includes('mouse') ? (event as React.MouseEvent).clientX : (event as React.TouchEvent).touches[0].clientX;
-        setStartX(clientX);
+    const childRefs = useMemo(() =>
+            Array(testData.length).fill(0).map(() => React.createRef<never>())
+        , []);
+
+    const swiped = (direction: string, index: number) => {
+        console.log(`You swiped ${direction} on card number ${index + 1}`);
+        setCurrentIndex(currentIndex => (currentIndex + 1) % testData.length); // Бесконечный цикл карточек
     };
 
-    const handleMove = (event: MouseEvent | TouchEvent) => {
-        if (!isDragging) return;
-        const clientX = event.type.includes('mouse') ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
-        setSpringProps.start({ x: clientX - startX });
+    const outOfFrame = (name: string) => {
+        console.log(`${name} left the screen!, ${currentIndex}`);
     };
-
-    const handleEnd = () => {
-        setIsDragging(false);
-        const swipeThreshold = window.innerWidth / 4;
-        const deltaX = springProps.x.get();
-        if (Math.abs(deltaX) > swipeThreshold) {
-            setSpringProps.start({
-                x: deltaX < 0 ? -window.innerWidth : window.innerWidth,
-                opacity: 0,
-                onRest: () => {
-                    setIndex(i => (i + 1) % testData.length);
-                    setSpringProps.start({ x: 0, opacity: 1 });
-                },
-            });
-        } else {
-            setSpringProps.start({ x: 0 });
-        }
-    };
-
-    React.useEffect(() => {
-        window.addEventListener('mousemove', handleMove);
-        window.addEventListener('mouseup', handleEnd);
-        window.addEventListener('touchmove', handleMove);
-        window.addEventListener('touchend', handleEnd);
-        return () => {
-            window.removeEventListener('mousemove', handleMove);
-            window.removeEventListener('mouseup', handleEnd);
-            window.removeEventListener('touchmove', handleMove);
-            window.removeEventListener('touchend', handleEnd);
-        };
-    }, [handleMove, handleEnd]);
 
     return (
-        <div style={{ position: 'relative', width: '100vw', height: '100vw' }}>
-            {[testData[index], testData[(index + 1) % testData.length]].map((item, i) => (
-                <animated.div
-                    key={i}
-                    style={{
-                        ...springProps,
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                        display: i === 0 ? 'block' : 'none'
-                    }}
-                    onMouseDown={handleStart}
-                    onTouchStart={handleStart}
+        <div>
+            {testData.map((person, index) => (
+                <TinderCard
+                    ref={childRefs[index]}
+                    key={person.name}
+                    onSwipe={(dir) => swiped(dir, index)}
+                    onCardLeftScreen={() => outOfFrame(person.name)}
+                    preventSwipe={['up', 'down']}
                 >
                     <CardComponent
-                        imageUrl={item.imageUrl}
-                        name={item.name}
-                        age={item.age}
-                        hobby={item.hobby}
+                        imageUrl={person.imageUrl}
+                        name={person.name}
+                        age={person.age}
+                        hobby={person.hobby}
                     />
-                </animated.div>
+                </TinderCard>
             ))}
         </div>
     );
