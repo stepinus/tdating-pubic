@@ -3,31 +3,45 @@ import { useSpring, animated } from 'react-spring';
 import CardComponent from './CardComponent';
 import { testData } from './testData';
 
-const MAX_VISIBLE_CARDS = 3;
-
 const SwipeCards: React.FC = () => {
     const [index, setIndex] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
     const [springProps, setSpringProps] = useSpring(() => ({
         x: 0,
-        config: { tension: 300, friction: 30 }
+        opacity: 1,
+        config: { tension: 300, friction: 30 },
+        immediate: key => key === "x"
     }));
 
     const handleStart = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+        setIsDragging(true);
         const clientX = event.type.includes('mouse') ? (event as React.MouseEvent).clientX : (event as React.TouchEvent).touches[0].clientX;
-        setSpringProps.start({ x: clientX });
+        setStartX(clientX);
     };
 
     const handleMove = (event: MouseEvent | TouchEvent) => {
+        if (!isDragging) return;
         const clientX = event.type.includes('mouse') ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
-        setSpringProps.start({ x: clientX });
+        setSpringProps.start({ x: clientX - startX });
     };
 
     const handleEnd = () => {
+        setIsDragging(false);
         const swipeThreshold = window.innerWidth / 4;
-        if (Math.abs(springProps.x.get()) > swipeThreshold) {
-            setIndex(i => (i + 1) % testData.length);
+        const deltaX = springProps.x.get();
+        if (Math.abs(deltaX) > swipeThreshold) {
+            setSpringProps.start({
+                x: deltaX < 0 ? -window.innerWidth : window.innerWidth,
+                opacity: 0,
+                onRest: () => {
+                    setIndex(i => (i + 1) % testData.length);
+                    setSpringProps.start({ x: 0, opacity: 1 });
+                },
+            });
+        } else {
+            setSpringProps.start({ x: 0 });
         }
-        setSpringProps.start({ x: 0 });
     };
 
     React.useEffect(() => {
@@ -41,11 +55,11 @@ const SwipeCards: React.FC = () => {
             window.removeEventListener('touchmove', handleMove);
             window.removeEventListener('touchend', handleEnd);
         };
-    }, []);
+    }, [handleMove, handleEnd]);
 
     return (
         <div style={{ position: 'relative', width: '100vw', height: '100vw' }}>
-            {testData.slice(index, index + MAX_VISIBLE_CARDS).map((item, i) => (
+            {[testData[index], testData[(index + 1) % testData.length]].map((item, i) => (
                 <animated.div
                     key={i}
                     style={{
@@ -53,9 +67,7 @@ const SwipeCards: React.FC = () => {
                         position: 'absolute',
                         width: '100%',
                         height: '100%',
-                        willChange: 'transform',
-                        touchAction: 'none',
-                        cursor: 'grab'
+                        display: i === 0 ? 'block' : 'none'
                     }}
                     onMouseDown={handleStart}
                     onTouchStart={handleStart}
