@@ -1,39 +1,38 @@
 import React, { useState } from 'react';
 import { useSpring, animated } from 'react-spring';
+import CardComponent from './CardComponent'; // Импорт компонента карточки
+import { testData } from './testData'; // Импорт данных из testData.ts
 
-interface SwipeCardsProps {
-    showTapZones: boolean;
+interface SpringProps {
+    x: number;
+    scale: number;
+    opacity: number;
 }
-
-const colors = ["red", "blue", "green", "yellow"];
-
-const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
+const SwipeCards: React.FC = () => {
     const [index, setIndex] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
-    const [springProps, setSpringProps] = useSpring(() => ({
+    const [springProps, setSpringProps] = useSpring<SpringProps>(() => ({
         x: 0,
         scale: 1,
-        opacity: 1,
         config: { tension: 300, friction: 30 },
         immediate: false
     }));
 
     const handleStart = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-        if (showTapZones) return;
         setIsDragging(true);
         const clientX = event.type.includes('mouse') ? (event as React.MouseEvent).clientX : (event as React.TouchEvent).touches[0].clientX;
         setStartX(clientX);
     };
 
     const handleMove = (event: MouseEvent | TouchEvent) => {
-        if (!isDragging || showTapZones) return;
+        if (!isDragging) return;
         const clientX = event.type.includes('mouse') ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
-        setSpringProps({ x: clientX - startX, immediate: true });
+        const deltaX = clientX - startX;
+        setSpringProps({ x: deltaX, immediate: true });
     };
 
     const handleEnd = () => {
-        if (showTapZones) return;
         setIsDragging(false);
         const deltaX = springProps.x.get();
         if (Math.abs(deltaX) > window.innerWidth / 4) {
@@ -43,7 +42,7 @@ const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
                 scale: 0.5,
                 opacity: 0,
                 onRest: () => {
-                    setIndex((i) => (i + 1) % colors.length);
+                    setIndex((i) => (i + 1) % testData.length);
                     setSpringProps({ x: 0, scale: 1, opacity: 1, immediate: false });
                 },
             });
@@ -66,37 +65,30 @@ const SwipeCards: React.FC<SwipeCardsProps> = ({ showTapZones }) => {
         };
     }, [handleMove, handleEnd]);
 
-    const tapZoneStyle = {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        width: '12.5%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        backdropFilter: 'blur(8px)',
-        display: showTapZones ? 'block' : 'none'
-    };
-
     return (
-        <animated.div
-            onMouseDown={handleStart}
-            onTouchStart={handleStart}
-            style={{
-                position: 'relative',
-                ...springProps,
-                width: '100vw',
-                height: '100vw',
-                backgroundColor: colors[index],
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                touchAction: 'none',
-                cursor: isDragging ? 'grabbing' : 'grab'
-            }}
-        >
-            {showTapZones && <div style={{ ...tapZoneStyle,position: 'absolute', left: 0 }} onClick={() => setSpringProps({ x: -window.innerWidth, scale: 0.5, opacity: 0 })} />}
-            {showTapZones && <div style={{ ...tapZoneStyle,position: 'absolute', right: 0 }} onClick={() => setSpringProps({ x: window.innerWidth, scale: 0.5, opacity: 0 })} />}
-            Swipe or Tap me!
-        </animated.div>
+        <div style={{ position: 'relative', width: '100vw', height: '100vw' }}>
+            {testData.map((item, i) => (
+                <animated.div
+                    key={i}
+                    style={{
+                        ...springProps,
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        display: i === index || i === index + 1 ? 'block' : 'none'
+                    }}
+                    onMouseDown={handleStart}
+                    onTouchStart={handleStart}
+                >
+                    <CardComponent
+                        imageUrl={item.imageUrl}
+                        name={item.name}
+                        age={item.age}
+                        hobby={item.hobby}
+                    />
+                </animated.div>
+            ))}
+        </div>
     );
 };
 
