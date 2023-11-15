@@ -14,6 +14,8 @@ const Simple:React.FC =()=> {
                 grabCursor={true}
                 modules={[EffectCards]}
                 style={{width:'100vw'}}
+                slidesPerView={2}
+                virtual
             >
                 {testData.map((character) =>
                     <SwiperSlide  key={character.name}>
