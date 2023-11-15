@@ -18,8 +18,8 @@ const Simple:React.FC =()=> {
                 slidesPerView={2}
                 virtual
             >
-                {testData.map((character) =>
-                    <SwiperSlide  key={character.name}>
+                {testData.map((character,index) =>
+                    <SwiperSlide  key={character.name} virtualIndex={index}>
                         <div style={{width:'100vw'}}><CardComponent {...character} /></div>
                     </SwiperSlide>
                 )}
