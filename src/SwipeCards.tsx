@@ -2,6 +2,7 @@ import React from 'react';
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/effect-cards';
+import 'swiper/css/virtual';
 import { EffectCards } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import CardComponent from "./CardComponent.tsx";
@@ -15,10 +16,11 @@ const Simple:React.FC =()=> {
                 modules={[EffectCards]}
                 style={{width:'100vw'}}
                 slidesPerView={2}
+                virtual
             >
                 {testData.map((character) =>
                     <SwiperSlide  key={character.name}>
-                        <CardComponent {...character}/>
+                        <div style={{width:'100vw'}}><CardComponent {...character} /></div>
                     </SwiperSlide>
                 )}
             </Swiper>
