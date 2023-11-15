@@ -12,7 +12,7 @@ interface CardProps {
 
 const CardComponent: React.FC<CardProps> = ({ imageUrl, name, age, hobby }) => {
     return (
-        <Card raised>
+        <Card raised sx={{width:'100vw'}}>
             <CardMedia
                 component="img"
                 height="100%"

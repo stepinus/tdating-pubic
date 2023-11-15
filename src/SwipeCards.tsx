@@ -14,13 +14,15 @@ export default () => {
 
 
     return (
+        <div style={{width:'100vw', height:'500px'}}>
         <Swiper modules={[Virtual,EffectCards]}   effect={'cards'}
-                grabCursor={true} spaceBetween={50} slidesPerView={3} virtual>
+                grabCursor={true}  slidesPerView={3} virtual>
             {testData.map((slideContent, index) => (
                 <SwiperSlide key={slideContent.name} virtualIndex={index}>
                   <CardComponent {...slideContent}/>
                 </SwiperSlide>
             ))}
         </Swiper>
+        </div>
     );
 };
