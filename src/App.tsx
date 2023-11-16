@@ -12,9 +12,7 @@ const router = createBrowserRouter([
         element: <SwipeCards />,
 
     }
-],{
-    basename: import.meta.env.DEV ? '/' : '/tdating-pubic/',
-});
+]);
 const App:React.FC = () => {
     const options: SDKInitOptions = {
         acceptCustomStyles: true,
