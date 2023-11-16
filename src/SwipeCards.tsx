@@ -25,7 +25,7 @@ const Simple:React.FC =  () => {
       <div>
         <div className='cardContainer'>
           {testData.map((character) =>
-            <TinderCard className='swipe' key={character.name} onSwipe={(dir) => swiped(dir)} onCardLeftScreen={() => outOfFrame(character.name)}>
+            <TinderCard swipeRequirementType={'position'} swipeThreshold={200} className='swipe' key={character.name} onSwipe={(dir) => swiped(dir)} onCardLeftScreen={() => outOfFrame(character.name)}>
               <CardComponent {...character}/>
             </TinderCard>
           )}
