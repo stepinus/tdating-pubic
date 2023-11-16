@@ -8,7 +8,7 @@ import  './styles.css'
 
 
 
-function Simple () {
+const Simple:React.FC =  () => {
    
     const [lastDirection, setLastDirection] = useState<string | undefined>()
   
