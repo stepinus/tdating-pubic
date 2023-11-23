@@ -17,6 +17,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.14.18",
     "@react-spring/web": "^9.5.5",
+    "@tma.js/bridge": "^1.4.1",
     "@tma.js/sdk-react": "^0.5.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

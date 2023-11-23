@@ -13,7 +13,7 @@ const Simple:React.FC =  () => {
     const [lastDirection, setLastDirection] = useState<string | undefined>()
   
     const swiped = (direction:string | undefined) => {
-    //   console.log('removing: ' + nameToDelete)
+      console.log(direction)
       setLastDirection(direction)
     }
   
@@ -25,7 +25,7 @@ const Simple:React.FC =  () => {
       <div>
         <div className='cardContainer'>
           {testData.map((character) =>
-            <TinderCard swipeRequirementType={'position'} swipeThreshold={200} className='swipe' key={character.name} onSwipe={(dir) => swiped(dir)} onCardLeftScreen={() => outOfFrame(character.name)}>
+            <TinderCard preventSwipe={['up','down',]} swipeRequirementType={'position'} swipeThreshold={200} className='swipe' key={character.name} onSwipe={(dir) => swiped(dir)} onCardLeftScreen={() => outOfFrame(character.name)}>
               <CardComponent {...character}/>
             </TinderCard>
           )}
