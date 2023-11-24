@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import SwipeCards from "./SwipeCards.tsx";
-import { SDKProvider, SDKInitOptions, useWebApp } from '@tma.js/sdk-react';
-import { postEvent } from '@tma.js/bridge';
+// import { SDKProvider, SDKInitOptions, useWebApp } from '@tma.js/sdk-react';
+// import { postEvent } from '@tma.js/bridge';
 
 import {
     createBrowserRouter,
