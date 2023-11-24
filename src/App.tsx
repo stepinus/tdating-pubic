@@ -15,25 +15,23 @@ const router = createBrowserRouter([
     }
 ]);
 const App:React.FC = () => {
-    const options: SDKInitOptions = {
-        acceptCustomStyles: true,
-        checkCompat: true,
-        debug: true
-    };
-    const webApp = useWebApp();
-    useEffect(() => {
-        // Проверяем, что webApp доступен
-        if (webApp) {
-          // Раскрываем приложение на весь экран
-          // Уведомляем Telegram о готовности приложения
-          postEvent('web_app_expand');
-          webApp.ready();
-        }
-      }, [webApp]);
+    // const options: SDKInitOptions = {
+    //     acceptCustomStyles: true,
+    //     checkCompat: true,
+    //     debug: true
+    // };
+    // const webApp = useWebApp();
+    // useEffect(() => {
+    //     // Проверяем, что webApp доступен
+    //     if (webApp) {
+    //       // Раскрываем приложение на весь экран
+    //       // Уведомляем Telegram о готовности приложения
+    //       postEvent('web_app_expand');
+    //       webApp.ready();
+    //     }
+    //   }, [webApp]);
     return (
-        <SDKProvider initOptions={options}>
             <RouterProvider router={router} />
-        </SDKProvider>
     );
 }
 
